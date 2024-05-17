@@ -2,8 +2,12 @@ const prompt = require("prompt-sync")({ sigint: true });
 
 //Array para almacenar tareas
 
-let tareas = [];
-let categoriasNombre = ["Personal", "Trabajo", "Estudios", "Otros"];
+let tareas = [
+  { nombre: "Lavar", completada: false, fechaLimite: null, categoria: 0 },
+  { nombre: "Planchar", completada: false, fechaLimite: null, categoria: 0 },
+  { nombre: "Dormir", completada: true, fechaLimite: null, categoria: 0 },
+];
+let categoriasNombre = ["Personal", "Trabajo", "Otros"];
 
 //Funcion para mostrar todoas las categorias
 
@@ -133,6 +137,55 @@ function mostrarTareasNoCompletadas() {
   });
 }
 
+// Funcion para ordenar tareas por la proriedad nombre con bubble sort
+function ordenarTareasPorNombre() {
+  let total = tareas.length;
+
+  for (let j = 0; j < total - 1; j++) {
+    for (let i = 0; i < total - 1; i++) {
+      if (tareas[i].nombre > tareas[i + 1].nombre) {
+        let temp = tareas[i];
+        tareas[i] = tareas[i + 1];
+        tareas[i + 1] = temp;
+      }
+    }
+  }
+}
+
+// Funcion para ordenar tareas por la proriedad fecha con bubble sort
+function ordenarTareasPorFecha() {
+  let total = tareas.length;
+
+  for (let j = 0; j < total - 1; j++) {
+    for (let i = 0; i < total - 1; i++) {
+      if (tareas[i].fechaLimite > tareas[i + 1].fechaLimite) {
+        let temp = tareas[i];
+        tareas[i] = tareas[i + 1];
+        tareas[i + 1] = temp;
+      }
+    }
+  }
+}
+
+//Funcion que busca una tarea por nombre y retorna su posicion
+
+function buscarTareaPorNombre(nombreTarea) {
+  let inicio = 0;
+  let fin = tareas.length - 1;
+
+  while (inicio <= fin) {
+    let mitad = Math.round((inicio + fin) / 2);
+
+    if (tareas[mitad].nombre === nombreTarea) {
+      return mitad;
+    } else if (tareas[mitad].nombre < nombreTarea) {
+      inicio = mitad + 1;
+    } else {
+      fin = mitad - 1;
+    }
+  }
+}
+
 function mostrarMenu() {
   console.log(" ---- Menu de Opciones --- ");
   console.log("1. Agregar tarea");
@@ -145,6 +198,9 @@ function mostrarMenu() {
   console.log("8. Filtrar tareas por categoria");
   console.log("9. Visualizar cantidad de tareas completadas por categoria");
   console.log("10. Mostrar tareas no completadas");
+  console.log("11. Ordenar tareas por nombre");
+  console.log("12. Ordenar tareas por fecha");
+  console.log("13. Buscar una tarea por su nombre");
   console.log("0. Salir");
 }
 
@@ -158,19 +214,19 @@ function interactuar() {
 
     switch (opcion) {
       case 1:
-        let = nombreTareaNueva = prompt("Ingrese el nombre de la tarea nueva:");
+        let nombreTareaNueva = prompt("Ingrese el nombre de la tarea nueva:");
         agregarTarea(nombreTareaNueva);
         break;
 
       case 2:
-        let = indiceAEliminar = parseInt(
+        let indiceAEliminar = parseInt(
           prompt("Ingrese el indice de la tarea a eliminar:")
         );
         eliminarTarea(indiceAEliminar);
         break;
 
       case 3:
-        let = indiceACompletar = parseInt(
+        let indiceACompletar = parseInt(
           prompt("Ingrese el indice de la tarea a completar:")
         );
         completarTarea(indiceACompletar);
@@ -235,13 +291,13 @@ function interactuar() {
         break;
 
       case 7:
-        let = nuevaCategoria = prompt("Ingrese la nueva categoria:");
+        let nuevaCategoria = prompt("Ingrese la nueva categoria:");
         agregarNuevaCategoria(nuevaCategoria);
         break;
 
       case 8:
         mostrarTodasLasCategorias();
-        let = nroCategoria = parseInt(
+        let nroCategoria = parseInt(
           prompt("Ingrese el número de la categoria a filtrar:")
         );
         filtrarTareasPorCategoria(nroCategoria);
@@ -259,6 +315,29 @@ function interactuar() {
 
       case 10:
         mostrarTareasNoCompletadas();
+        break;
+
+      case 11:
+        ordenarTareasPorNombre();
+        console.log(tareas);
+        break;
+
+      case 12:
+        ordenarTareasPorFecha();
+        console.log(tareas);
+        break;
+
+      case 13:
+        ordenarTareasPorNombre();
+
+        let nombreABuscar = prompt("Ingrese nombre a buscar: ");
+        let indiceTarea = buscarTareaPorNombre(nombreABuscar);
+
+        if (indiceTarea !== -1) {
+          console.log("Tarea encontrada en el indice " + indiceTarea);
+        } else {
+          console.log("Tarea no encontrada");
+        }
         break;
 
       default:
